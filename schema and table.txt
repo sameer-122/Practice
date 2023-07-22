@@ -1,6 +1,9 @@
 -- Creating a new schema
 CREATE SCHEMA my_schema;
 
+CREATE SCHEMA IF NOT EXISTS "test-schema"
+    AUTHORIZATION postgres;
+
 -- Creating a table within the schema
 CREATE TABLE my_schema.employees (
     id INT PRIMARY KEY,
@@ -15,3 +18,12 @@ INSERT INTO my_schema.employees (id, name, department) VALUES
 
 -- Querying data from the table
 SELECT * FROM my_schema.employees;
+
+-- Add new column to an existing table
+ALTER TABLE table_name
+ADD column_name datatype;
+
+-- Change DATA type of column
+ALTER TABLE table_name
+ALTER COLUMN DateOfBirth year;                   (changing datatype of 'DateOfBirth' to 'year' )
+
