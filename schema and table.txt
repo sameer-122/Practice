@@ -1,0 +1,17 @@
+-- Creating a new schema
+CREATE SCHEMA my_schema;
+
+-- Creating a table within the schema
+CREATE TABLE my_schema.employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    department VARCHAR(50)
+);
+
+-- Inserting data into the table
+INSERT INTO my_schema.employees (id, name, department) VALUES
+(1, 'John Doe', 'HR'),
+(2, 'Jane Smith', 'Finance');
+
+-- Querying data from the table
+SELECT * FROM my_schema.employees;
