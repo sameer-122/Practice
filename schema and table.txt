@@ -21,9 +21,25 @@ SELECT * FROM my_schema.employees;
 
 -- Add new column to an existing table
 ALTER TABLE table_name
-ADD column_name datatype;
+ADD  COLUMN column_name datatype;
+
+-- Delete existing column in the table
+ALTER TABLE employees
+DROP COLUMN IF EXISTS column_name;
+
 
 -- Change DATA type of column
 ALTER TABLE table_name
-ALTER COLUMN DateOfBirth year;                   (changing datatype of 'DateOfBirth' to 'year' )
+ALTER COLUMN column_name TYPE datatype
+USING  column_name::datatype;     
+
+example:
+alter table employees
+alter column age type varchar 
+USING age::varchar;
+
+--UPDATE Table
+UPDATE Customers
+SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+WHERE CustomerID = 1;      
 
