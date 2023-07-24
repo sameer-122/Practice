@@ -1,0 +1,56 @@
+# To get product details of product having lowest price
+SELECT * from products 
+where price = (SELECT MIN(Price) FROM Products); 
+
+or
+
+SELECT * from products where price = 
+(SELECT MIN(Price) AS SmallestPrice
+FROM Products); 
+
+# To get product details of product having 2nd lowest price
+
+SELECT min(Price) FROM Products
+where productid != 
+(select productid from products 
+ where price = (SELECT min(Price) FROM Products)); 
+
+or
+
+SELECT * FROM products ORDER BY price       ( It worked  because limit is last in sql priority)
+OFFSET 1                                    ( In some SQl server OFFSET donot work but it works fine in PostgreSQL)
+LIMIT 1;
+
+or 
+
+WITH RankedProducts AS (
+  SELECT *, ROW_NUMBER() OVER (ORDER BY price) AS row_num
+  FROM products
+)
+SELECT *
+FROM RankedProducts
+WHERE row_num = 2;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FROM
+JOIN
+WHERE
+GROUP BY
+HAVING
+SELECT
+ORDER BY
+LIMIT

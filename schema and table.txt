@@ -33,12 +33,20 @@ ALTER TABLE table_name
 ALTER COLUMN column_name TYPE datatype
 USING  column_name::datatype;     
 
-example:
+Example:
 alter table employees
 alter column age type varchar 
-USING age::varchar;
+USING age::varchar;              ( The "::" cast operator is used here to explicitly cast the "column_name" data to the specified "datatype". )
 
---UPDATE Table
+-- Rename column name
+ALTER TABLE table_name 
+RENAME COLUMN column_name TO new_column_name;
+
+-- Add primary key 
+ALTER TABLE products 
+ADD PRIMARY KEY (column_name);
+
+--UPDATE Table content
 UPDATE Customers
 SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
 WHERE CustomerID = 1;      

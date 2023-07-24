@@ -1,0 +1,325 @@
+--SQL JOIN
+		A JOIN clause is used to combine rows from two or more tables, based on a related column between them.
+		
+OrderID		CustomerID			OrderDate
+10308				2							1996-09-18                          (Orders Table)
+10309				37						1996-09-19
+10310				77						1996-09-20
+
+
+CustomerID			CustomerName											ContactName					Country
+1							Alfreds Futterkiste												Maria Anders				Germany								(Customers Table)
+2							Ana Trujillo Emparedados y helados				Ana Trujillo					Mexico					
+3							Antonio Moreno Taquería								Antonio Moreno			Mexico
+
+SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
+FROM Orders																																			(sample inner join query)
+INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
+
+or without join
+
+SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
+FROM Orders,Customers																													(same result without using join)
+where Orders.CustomerID=Customers.CustomerID;
+
+
+--SQL INNER JOIN Keyword
+		The INNER JOIN keyword selects records that have matching values in both tables.
+		
+SELECT column_name(s)
+FROM table1 
+INNER JOIN table2
+ON table1.column_name = table2.column_name;		
+
+SELECT Orders.OrderID, Customers.CustomerName
+FROM Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
+
+	--- JOIN Three Tables
+	
+SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+FROM ((Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
+INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+		
+--SQL LEFT JOIN Keyword
+		The LEFT JOIN keyword returns all records from the left table (table1), and the matching records from the right table (table2)
+		
+SELECT column_name(s)
+FROM table1
+LEFT JOIN table2
+ON table1.column_name = table2.column_name;
+
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+LEFT JOIN Orders
+ON Customers.CustomerID=Orders.CustomerID
+ORDER BY Customers.CustomerName;
+
+--SQL RIGHT JOIN Keyword
+		The RIGHT JOIN keyword returns all records from the right table (table2), and the matching records from the left table (table1)
+		
+SELECT column_name(s)
+FROM table1
+RIGHT JOIN table2
+ON table1.column_name = table2.column_name;
+
+SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
+FROM Orders
+RIGHT JOIN Employees
+ON Orders.EmployeeID = Employees.EmployeeID
+ORDER BY Orders.OrderID;
+
+--SQL FULL OUTER JOIN Keyword
+		The FULL OUTER JOIN keyword returns all records when there is a match in left (table1) or right (table2) table records.
+		Tip: FULL OUTER JOIN and FULL JOIN are the same.
+		
+SELECT column_name(s)
+FROM table1
+FULL OUTER JOIN table2
+ON table1.column_name = table2.column_name
+WHERE condition;
+
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+FULL OUTER JOIN Orders ON Customers.CustomerID=Orders.CustomerID
+ORDER BY Customers.CustomerName;
+		
+		
+--SElf JOIN 
+
+	Example1:
+SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+FROM Customers A, Customers B
+WHERE A.CustomerID <> B.CustomerID									(  <> is same as != )
+AND A.City = B.City 
+ORDER BY A.City;
+
+	Example2:
+	The following statements create the employee table and insert some sample data into the table
+	
+CREATE TABLE employee (
+	employee_id INT PRIMARY KEY,
+	first_name VARCHAR (255) NOT NULL,
+	last_name VARCHAR (255) NOT NULL,
+	manager_id INT,
+	FOREIGN KEY (manager_id) 
+	REFERENCES employee (employee_id) 
+	ON DELETE CASCADE
+);
+INSERT INTO employee (
+	employee_id,
+	first_name,
+	last_name,
+	manager_id
+)
+VALUES
+	(1, 'Windy', 'Hays', NULL),
+	(2, 'Ava', 'Christensen', 1),
+	(3, 'Hassan', 'Conner', 1),
+	(4, 'Anna', 'Reeves', 2),
+	(5, 'Sau', 'Norman', 2),
+	(6, 'Kelsie', 'Hays', 3),
+	(7, 'Tory', 'Goff', 3),
+	(8, 'Salley', 'Lester', 3);
+	
+	--- SELF INNER JOIN
+SELECT
+    e.first_name || ' ' || e.last_name employee,
+    m .first_name || ' ' || m .last_name manager
+FROM
+    employee e
+INNER JOIN employee m ON m .employee_id = e.manager_id
+ORDER BY manager;
+	--- SELF LEFT JOIN    ( To include top manager also as employee which do not have any manager)
+SELECT
+    e.first_name || ' ' || e.last_name employee,
+    m .first_name || ' ' || m .last_name manager
+FROM
+    employee e
+LEFT JOIN employee m ON m .employee_id = e.manager_id
+ORDER BY manager;
+
+******************************************UNION******************************
+--The SQL UNION Operator
+		The UNION operator is used to combine the result-set of two or more SELECT statements.
+		
+		Key Points to be Noted :-
+		1. Every SELECT statement within UNION must have the same number of columns
+		2. The columns must also have similar data types
+		3. The columns in every SELECT statement must also be in the same order
+
+	---UNION Syntax	
+SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2;
+
+	---UNION ALL Syntax
+		The UNION operator selects only distinct values by default. To allow duplicate values, use UNION ALL:
+		
+SELECT column_name(s) FROM table1
+UNION ALL
+SELECT column_name(s) FROM table2;
+
+	Example1:
+SELECT City FROM Customers
+UNION
+SELECT City FROM Suppliers
+ORDER BY City;
+	
+	( Note: If some customers or suppliers have the same city, each city will only be listed once, because UNION selects only distinct values.
+	Use UNION ALL to also select duplicate values! )
+	
+SELECT City FROM Customers
+UNION ALL
+SELECT City FROM Suppliers
+ORDER BY City;
+	
+	---SQL UNION With WHERE
+	
+SELECT City, Country FROM Customers
+WHERE Country='Germany'
+UNION
+SELECT City, Country FROM Suppliers
+WHERE Country='Germany'
+ORDER BY City;
+
+	---Another UNION Example with AS
+		
+		(  So, here we have created a temporary column named "Type", that list whether the contact person is a "Customer" or a "Supplier" )
+	
+SELECT 'Customer' AS Type, ContactName, City, Country
+FROM Customers
+UNION
+SELECT 'Supplier', ContactName, City, Country
+FROM Suppliers;
+
+		Example2:
+		
+DROP TABLE IF EXISTS top_rated_films;
+CREATE TABLE top_rated_films(
+	title VARCHAR NOT NULL,
+	release_year SMALLINT
+);
+
+DROP TABLE IF EXISTS most_popular_films;
+CREATE TABLE most_popular_films(
+	title VARCHAR NOT NULL,
+	release_year SMALLINT
+);
+
+INSERT INTO 
+   top_rated_films(title,release_year)
+VALUES
+   ('The Shawshank Redemption',1994),
+   ('The Godfather',1972),
+   ('12 Angry Men',1957);
+
+INSERT INTO 
+   most_popular_films(title,release_year)
+VALUES
+   ('An American Pickle',2020),
+   ('The Godfather',1972),
+   ('Greyhound',2020);
+   
+    ---Doing union of view to view from both table in a single view.
+SELECT * FROM top_rated_films
+UNION
+SELECT * FROM most_popular_films;
+
+*****************************************GROUP BY***********************************
+--The SQL GROUP BY Statement
+	---The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) 
+			to group the result-set by one or more columns.
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+ORDER BY column_name(s);
+
+	---Example: The following SQL statement lists the number of customers in each country:
+	
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country;
+
+	 ---Example: The following SQL statement lists the number of customers in each country, sorted high to low
+	 
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+ORDER BY COUNT(CustomerID) DESC;
+
+	 ---Example: GROUP BY With JOIN Example.The following SQL statement lists the number of orders sent by each shipper:
+	 
+SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders 
+FROM Orders
+LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+GROUP BY ShipperName;
+
+******************************************Having**************************************
+--The SQL HAVING Clause
+	---The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions.
+
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+HAVING condition
+ORDER BY column_name(s);
+
+	--- Example: The following SQL statement lists the number of customers in each country. Only include countries with more than 5 customers:
+
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5;
+
+	---Example: The following SQL statement lists the number of customers in each country, sorted high to low
+			(Only include countries with more than 5 customers)
+			
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
+
+*******************************************EXISTS***********************************
+--The SQL EXISTS Operator
+	---The EXISTS operator is used to test for the existence of any record in a subquery.
+	---The EXISTS operator returns TRUE if the subquery returns one or more records.
+	
+SELECT column_name(s)
+FROM table_name
+WHERE EXISTS
+(SELECT column_name FROM table_name WHERE condition);
+
+	---Example:
+ProductID			ProductName									SupplierID			CategoryID			Unit							Price
+1							Chais													1							1						10 boxes x 20 bags			18
+2							Chang													1							1						24 - 12 oz bottles			19				("Products" table)
+3							Aniseed Syrup									1							2						12 - 550 ml bottles			10
+4							Chef Anton's Cajun Seasoning		2							2						48 - 6 oz jars						22
+5							Chef Anton's Gumbo Mix				2							2						36 boxes							21.35
+																																																			( "Suppliers" table )
+SupplierID			SupplierName								ContactName					Address								City					PostalCode			Country
+1							Exotic Liquid										Charlotte Cooper	49 Gilbert St.						London				EC1 4SD					UK
+2							New Orleans Cajun Delights			Shelley Burke			P.O. Box 78934					New Orleans	70117						USA
+3							Grandma Kelly's Homestead		Regina Murphy		707 Oxford Rd.					Ann Arbor			48104						USA
+4							Tokyo Traders									Yoshi Nagase			9-8 Sekimai Musashino-shi	Tokyo				100							Japan
+
+SELECT SupplierName
+FROM Suppliers
+WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price < 20);
+
+SELECT SupplierName
+FROM Suppliers
+WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price = 22);
+
+
+
+
+
+
+
+
